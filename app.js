@@ -57,6 +57,17 @@ app.post("/users", userValidationRules, checkUser, async (req, res) => {
 });
 
 // Read
+app.get("/users", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    return res.json(users);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, error: "Something went wrong" });
+  }
+});
 // Update
 // Delete
 // Find
