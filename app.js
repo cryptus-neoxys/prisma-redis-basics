@@ -27,7 +27,7 @@ const simpleValidationResults = validationResult.withDefaults({
   formatter: (err) => err.msg,
 });
 
-const checkUser = (req, res, next) => {
+const checkForErrors = (req, res, next) => {
   const errors = simpleValidationResults(req);
   if (!errors.isEmpty()) {
     return res.status(400).json(errors.mapped());
@@ -37,7 +37,7 @@ const checkUser = (req, res, next) => {
 };
 
 // Create
-app.post("/users", userValidationRules, checkUser, async (req, res) => {
+app.post("/users", userValidationRules, checkForErrors, async (req, res) => {
   const { name, email, role } = req.body;
 
   try {
@@ -70,27 +70,32 @@ app.get("/users", async (req, res) => {
 });
 
 // Update
-app.put("/users/:uuid", userValidationRules, checkUser, async (req, res) => {
-  const { name, email, role } = req.body;
-  const uuid = req.params.uuid;
+app.put(
+  "/users/:uuid",
+  userValidationRules,
+  checkForErrors,
+  async (req, res) => {
+    const { name, email, role } = req.body;
+    const uuid = req.params.uuid;
 
-  try {
-    let user = await prisma.user.findFirst({ where: { uuid } });
-    if (!user) {
-      throw { user: "user doesn't exists" };
+    try {
+      let user = await prisma.user.findFirst({ where: { uuid } });
+      if (!user) {
+        throw { user: "user doesn't exists" };
+      }
+
+      user = await prisma.user.update({
+        where: { uuid },
+        data: { name, email, role },
+      });
+
+      return res.json({ success: true, data: user });
+    } catch (error) {
+      console.error(error);
+      return res.status(404).json({ success: false, error });
     }
-
-    user = await prisma.user.update({
-      where: { uuid },
-      data: { name, email, role },
-    });
-
-    return res.json({ success: true, data: user });
-  } catch (error) {
-    console.error(error);
-    return res.status(404).json({ success: false, error });
   }
-});
+);
 
 // Delete
 app.delete("/users/:uuid", async (req, res) => {
@@ -125,8 +130,41 @@ app.get("/users/:uuid", async (req, res) => {
   }
 });
 
+// Post section begins
+
+const postValidationRules = [
+  body("title").isLength({ min: 1 }).withMessage("title can't be empty"),
+  body("body").isLength({ min: 1 }).withMessage("post body can't be empty"),
+];
+
 // Create Post
+
+app.post("/posts", postValidationRules, checkForErrors, async (req, res) => {
+  const { userUuid, title, body } = req.body;
+
+  try {
+    const post = await prisma.post.create({
+      data: { title, body, user: { connect: { uuid: userUuid } } },
+    });
+
+    return res.json({ success: true, data: post });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, error });
+  }
+});
 // Read all Posts
+app.get("/posts", async (req, res) => {
+  try {
+    const posts = await prisma.post.findMany();
+    return res.json({ success: true, data: posts });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, error: "Something went wrong" });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost${PORT}`);
