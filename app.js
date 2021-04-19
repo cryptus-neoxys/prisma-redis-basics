@@ -68,6 +68,7 @@ app.get("/users", async (req, res) => {
       .json({ success: false, error: "Something went wrong" });
   }
 });
+
 // Update
 app.put("/users/:uuid", userValidationRules, checkUser, async (req, res) => {
   const { name, email, role } = req.body;
@@ -91,6 +92,18 @@ app.put("/users/:uuid", userValidationRules, checkUser, async (req, res) => {
   }
 });
 // Delete
+app.delete("/users/:uuid", async (req, res) => {
+  const uuid = req.params.uuid;
+  try {
+    await prisma.user.delete({ where: { uuid } });
+    return res.json({ message: "User deleted" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, error: "Something went wrong" });
+  }
+});
 // Find
 
 // Create Post
