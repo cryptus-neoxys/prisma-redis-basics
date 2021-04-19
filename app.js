@@ -49,7 +49,7 @@ app.post("/users", userValidationRules, checkUser, async (req, res) => {
       data: { name, email, role },
     });
 
-    return res.json(user);
+    return res.json({ success: true, data: user });
   } catch (error) {
     console.error(error);
     return res.status(400).json({ success: false, error });
@@ -60,7 +60,7 @@ app.post("/users", userValidationRules, checkUser, async (req, res) => {
 app.get("/users", async (req, res) => {
   try {
     const users = await prisma.user.findMany();
-    return res.json(users);
+    return res.json({ success: true, data: users });
   } catch (error) {
     console.error(error);
     return res
@@ -85,18 +85,19 @@ app.put("/users/:uuid", userValidationRules, checkUser, async (req, res) => {
       data: { name, email, role },
     });
 
-    return res.json(user);
+    return res.json({ success: true, data: user });
   } catch (error) {
     console.error(error);
     return res.status(404).json({ success: false, error });
   }
 });
+
 // Delete
 app.delete("/users/:uuid", async (req, res) => {
   const uuid = req.params.uuid;
   try {
     await prisma.user.delete({ where: { uuid } });
-    return res.json({ message: "User deleted" });
+    return res.json({ success: true, message: "User deleted" });
   } catch (error) {
     console.error(error);
     return res
@@ -104,6 +105,7 @@ app.delete("/users/:uuid", async (req, res) => {
       .json({ success: false, error: "Something went wrong" });
   }
 });
+
 // Find
 app.get("/users/:uuid", async (req, res) => {
   const uuid = req.params.uuid;
@@ -114,7 +116,7 @@ app.get("/users/:uuid", async (req, res) => {
       throw { user: "user doesn't exists" };
     }
 
-    return res.json(user);
+    return res.json({ success: true, data: user });
   } catch (error) {
     console.error(error);
     return res
