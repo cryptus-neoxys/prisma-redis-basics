@@ -105,6 +105,23 @@ app.delete("/users/:uuid", async (req, res) => {
   }
 });
 // Find
+app.get("/users/:uuid", async (req, res) => {
+  const uuid = req.params.uuid;
+
+  try {
+    const user = await prisma.user.findFirst({ where: { uuid } });
+    if (!user) {
+      throw { user: "user doesn't exists" };
+    }
+
+    return res.json(user);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(404)
+      .json({ success: false, error: "Something went wrong" });
+  }
+});
 
 // Create Post
 // Read all Posts
