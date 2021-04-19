@@ -59,7 +59,20 @@ app.post("/users", userValidationRules, checkForErrors, async (req, res) => {
 // Read
 app.get("/users", async (req, res) => {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      orderBy: { createdAt: "desc" },
+      select: {
+        uuid: true,
+        name: true,
+        role: true,
+        posts: {
+          select: {
+            title: true,
+            body: true,
+          },
+        },
+      },
+    });
     return res.json({ success: true, data: users });
   } catch (error) {
     console.error(error);
@@ -156,7 +169,10 @@ app.post("/posts", postValidationRules, checkForErrors, async (req, res) => {
 // Read all Posts
 app.get("/posts", async (req, res) => {
   try {
-    const posts = await prisma.post.findMany();
+    const posts = await prisma.post.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { user: true },
+    });
     return res.json({ success: true, data: posts });
   } catch (error) {
     console.error(error);
