@@ -1,6 +1,6 @@
-const { PrismaClient } = require("@prisma/client");
-const express = require("express");
-const { body, validationResult } = require("express-validator");
+import { PrismaClient } from "@prisma/client";
+import express, { NextFunction, Request, Response } from "express";
+import { body, validationResult } from "express-validator";
 
 const prisma = new PrismaClient();
 
@@ -27,7 +27,7 @@ const simpleValidationResults = validationResult.withDefaults({
   formatter: (err) => err.msg,
 });
 
-const checkForErrors = (req, res, next) => {
+const checkForErrors = (req: Request, res: Response, next: NextFunction) => {
   const errors = simpleValidationResults(req);
   if (!errors.isEmpty()) {
     return res.status(400).json(errors.mapped());
@@ -37,27 +37,32 @@ const checkForErrors = (req, res, next) => {
 };
 
 // Create
-app.post("/users", userValidationRules, checkForErrors, async (req, res) => {
-  const { name, email, role } = req.body;
+app.post(
+  "/users",
+  userValidationRules,
+  checkForErrors,
+  async (req: Request, res: Response) => {
+    const { name, email, role } = req.body;
 
-  try {
-    const existingUser = await prisma.user.findFirst({ where: { email } });
-    if (existingUser) {
-      throw { email: "email already exists" };
+    try {
+      const existingUser = await prisma.user.findFirst({ where: { email } });
+      if (existingUser) {
+        throw { email: "email already exists" };
+      }
+      const user = await prisma.user.create({
+        data: { name, email, role },
+      });
+
+      return res.json({ success: true, data: user });
+    } catch (error) {
+      console.error(error);
+      return res.status(400).json({ success: false, error });
     }
-    const user = await prisma.user.create({
-      data: { name, email, role },
-    });
-
-    return res.json({ success: true, data: user });
-  } catch (error) {
-    console.error(error);
-    return res.status(400).json({ success: false, error });
   }
-});
+);
 
 // Read
-app.get("/users", async (req, res) => {
+app.get("/users", async (_: Request, res: Response) => {
   try {
     const users = await prisma.user.findMany({
       orderBy: { createdAt: "desc" },
@@ -87,7 +92,7 @@ app.put(
   "/users/:uuid",
   userValidationRules,
   checkForErrors,
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     const { name, email, role } = req.body;
     const uuid = req.params.uuid;
 
@@ -111,7 +116,7 @@ app.put(
 );
 
 // Delete
-app.delete("/users/:uuid", async (req, res) => {
+app.delete("/users/:uuid", async (req: Request, res: Response) => {
   const uuid = req.params.uuid;
   try {
     await prisma.user.delete({ where: { uuid } });
@@ -125,7 +130,7 @@ app.delete("/users/:uuid", async (req, res) => {
 });
 
 // Find
-app.get("/users/:uuid", async (req, res) => {
+app.get("/users/:uuid", async (req: Request, res: Response) => {
   const uuid = req.params.uuid;
 
   try {
@@ -152,22 +157,27 @@ const postValidationRules = [
 
 // Create Post
 
-app.post("/posts", postValidationRules, checkForErrors, async (req, res) => {
-  const { userUuid, title, body } = req.body;
+app.post(
+  "/posts",
+  postValidationRules,
+  checkForErrors,
+  async (req: Request, res: Response) => {
+    const { userUuid, title, body } = req.body;
 
-  try {
-    const post = await prisma.post.create({
-      data: { title, body, user: { connect: { uuid: userUuid } } },
-    });
+    try {
+      const post = await prisma.post.create({
+        data: { title, body, user: { connect: { uuid: userUuid } } },
+      });
 
-    return res.json({ success: true, data: post });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ success: false, error });
+      return res.json({ success: true, data: post });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ success: false, error });
+    }
   }
-});
+);
 // Read all Posts
-app.get("/posts", async (req, res) => {
+app.get("/posts", async (_: Request, res: Response) => {
   try {
     const posts = await prisma.post.findMany({
       orderBy: { createdAt: "desc" },
