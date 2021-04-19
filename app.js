@@ -69,6 +69,27 @@ app.get("/users", async (req, res) => {
   }
 });
 // Update
+app.put("/users/:uuid", userValidationRules, checkUser, async (req, res) => {
+  const { name, email, role } = req.body;
+  const uuid = req.params.uuid;
+
+  try {
+    let user = await prisma.user.findFirst({ where: { uuid } });
+    if (!user) {
+      throw { user: "user doesn't exists" };
+    }
+
+    user = await prisma.user.update({
+      where: { uuid },
+      data: { name, email, role },
+    });
+
+    return res.json(user);
+  } catch (error) {
+    console.error(error);
+    return res.status(404).json({ success: false, error });
+  }
+});
 // Delete
 // Find
 
