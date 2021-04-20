@@ -38,6 +38,7 @@ This is a basic CRUD application with a simple User and Post Relational Schema. 
     <th align=centre>129.72 ms</th>
     <th align=centre>0.418 ms</th>
   </tr>
+</table>
 
 ## 🔔 Credits
 Built from [Classsed](https://youtu.be/Ehv69qFvN2I), [Traversy Media](https://youtu.be/oaJq1mQ3dFI), [yoursTRULY](https://youtu.be/RL9mnX0qXhY) YouTube tutorials.
