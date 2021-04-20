@@ -19,7 +19,7 @@ This is a basic CRUD application with a simple User and Post Relational Schema. 
 5. `yarn run dev` or `npm run dev`
 6. the app should be running at http://localhost:5000/
 
-## Screenshots
+## Screenshots (Cache Speed)
 
 <table>
   <tr>
@@ -28,15 +28,15 @@ This is a basic CRUD application with a simple User and Post Relational Schema. 
   </tr>
   <tr>
     <td>
-      ![Screenshot from 2021-04-20 16-29-44](https://user-images.githubusercontent.com/50591491/115385355-ad362b80-a1f5-11eb-8482-60b3c7c51c37.png)
+      <img src="https://user-images.githubusercontent.com/50591491/115385355-ad362b80-a1f5-11eb-8482-60b3c7c51c37.png">
     </td>
     <td>
-      ![Screenshot from 2021-04-20 16-30-35](https://user-images.githubusercontent.com/50591491/115385436-c50daf80-a1f5-11eb-9f0a-77771bfdc8e2.png)
+      <img src="https://user-images.githubusercontent.com/50591491/115385436-c50daf80-a1f5-11eb-9f0a-77771bfdc8e2.png">
     </td>
   </tr>
   <tr>
-    <td align=centre>129.72 ms</td>
-    <td align=centre>0.418 ms</td>
+    <th align=centre>129.72 ms</th>
+    <th align=centre>0.418 ms</th>
   </tr>
 
 ## 🔔 Credits
