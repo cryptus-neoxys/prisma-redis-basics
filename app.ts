@@ -88,6 +88,7 @@ app.get("/users", async (_: Request, res: Response) => {
           select: {
             title: true,
             body: true,
+            createdAt: true,
           },
         },
       },
