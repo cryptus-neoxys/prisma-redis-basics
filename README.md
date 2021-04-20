@@ -23,7 +23,7 @@ This is a basic CRUD application with a simple User and Post Relational Schema. 
 
 <table>
   <tr>
-    <th>Without Cache</th>
+    <th>Using Database</th>
     <th>With Cache</th>
   </tr>
   <tr>
@@ -35,8 +35,8 @@ This is a basic CRUD application with a simple User and Post Relational Schema. 
     </td>
   </tr>
   <tr>
-    <th align=centre>129.72 ms</th>
-    <th align=centre>0.418 ms</th>
+    <th align=centre>Response Time: 129.72 ms</th>
+    <th align=centre>Response Time: 0.418 ms</th>
   </tr>
 </table>
 
