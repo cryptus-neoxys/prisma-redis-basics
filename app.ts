@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import express, { json, NextFunction, Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import responseTime from "response-time";
 import { body, validationResult } from "express-validator";
 import redis from "redis";
