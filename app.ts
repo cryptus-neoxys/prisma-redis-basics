@@ -1,6 +1,13 @@
 import { PrismaClient } from "@prisma/client";
-import express, { NextFunction, Request, Response } from "express";
+import express, { json, NextFunction, Request, Response } from "express";
+import responseTime from "response-time";
 import { body, validationResult } from "express-validator";
+import redis from "redis";
+import { promisify } from "util";
+
+const client = redis.createClient();
+const getAsync = promisify(client.get).bind(client);
+const setAsync = promisify(client.set).bind(client);
 
 const prisma = new PrismaClient();
 
@@ -8,6 +15,7 @@ const PORT = process.env.PORT || 5000;
 
 const app = express();
 app.use(express.json());
+app.use(responseTime());
 
 const userValidationRules = [
   body("email")
@@ -64,6 +72,12 @@ app.post(
 // Read
 app.get("/users", async (_: Request, res: Response) => {
   try {
+    const getRes = await getAsync("allUsers");
+    if (getRes) {
+      console.log("Used Cache");
+      return res.json({ success: true, data: JSON.parse(getRes) });
+    }
+
     const users = await prisma.user.findMany({
       orderBy: { createdAt: "desc" },
       select: {
@@ -78,6 +92,8 @@ app.get("/users", async (_: Request, res: Response) => {
         },
       },
     });
+
+    await setAsync("allUsers", JSON.stringify(users));
     return res.json({ success: true, data: users });
   } catch (error) {
     console.error(error);
@@ -134,11 +150,19 @@ app.get("/users/:uuid", async (req: Request, res: Response) => {
   const uuid = req.params.uuid;
 
   try {
+    const getRes = await getAsync(uuid);
+    if (getRes) {
+      console.log("Used Cache");
+      return res.json({ success: true, data: JSON.parse(getRes) });
+    }
+
+    console.log("Using DB");
     const user = await prisma.user.findFirst({ where: { uuid } });
     if (!user) {
       throw { user: "user doesn't exists" };
     }
 
+    await setAsync(user.uuid, JSON.stringify(user));
     return res.json({ success: true, data: user });
   } catch (error) {
     console.error(error);
@@ -156,7 +180,6 @@ const postValidationRules = [
 ];
 
 // Create Post
-
 app.post(
   "/posts",
   postValidationRules,
@@ -176,13 +199,23 @@ app.post(
     }
   }
 );
+
 // Read all Posts
 app.get("/posts", async (_: Request, res: Response) => {
   try {
+    const getRes = await getAsync("allPosts");
+    if (getRes) {
+      console.log("Used Cache");
+      return res.json({ success: true, data: JSON.parse(getRes) });
+    }
+
     const posts = await prisma.post.findMany({
       orderBy: { createdAt: "desc" },
       include: { user: true },
     });
+
+    await setAsync("allPosts", JSON.stringify(posts));
+    console.log("Using DB");
     return res.json({ success: true, data: posts });
   } catch (error) {
     console.error(error);
@@ -193,5 +226,5 @@ app.get("/posts", async (_: Request, res: Response) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
