@@ -45,4 +45,4 @@ Made to learn Prisma V2 and Redis. Also implemented rate-limit with Redis as Sto
 </table>
 
 ## 🔔 Credits
-Built from [Classsed](https://youtu.be/Ehv69qFvN2I), [Traversy Media](https://youtu.be/oaJq1mQ3dFI), [yoursTRULY](https://youtu.be/RL9mnX0qXhY) YouTube tutorials.
+Built from [Classsed](https://youtu.be/Ehv69qFvN2I), [Traversy Media](https://youtu.be/oaJq1mQ3dFI), [yoursTRULY](https://youtu.be/RL9mnX0qXhY) and [Coding Garden](https://youtu.be/nCWE6eonL7k) YouTube videos.
