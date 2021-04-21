@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import express, { NextFunction, Request, Response } from "express";
 import responseTime from "response-time";
+import rateLimit from "express-rate-limit";
+import RedisStore from "rate-limit-redis";
 import { body, validationResult } from "express-validator";
 import redis from "redis";
 import { promisify } from "util";
@@ -13,9 +15,18 @@ const prisma = new PrismaClient();
 
 const PORT = process.env.PORT || 5000;
 
+const limiter = rateLimit({
+  store: new RedisStore({
+    client: client,
+  }),
+  windowMs: 15 * 1000, // per minutes
+  max: 10, // limit each IP to 10 requests per windowMs
+});
+
 const app = express();
 app.use(express.json());
 app.use(responseTime());
+app.use(limiter);
 
 const userValidationRules = [
   body("email")
