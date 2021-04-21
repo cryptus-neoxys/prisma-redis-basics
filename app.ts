@@ -72,12 +72,16 @@ app.post(
 // Read
 app.get("/users", async (_: Request, res: Response) => {
   try {
-    const getRes = await getAsync("allUsers");
-    if (getRes) {
-      console.log("Used Cache");
-      return res.json({ success: true, data: JSON.parse(getRes) });
+    let getExp: number = parseInt(String(await getAsync("usersExp")));
+    if (getExp && getExp > Date.now() - 15 * 1000) {
+      const getRes = await getAsync("allUsers");
+      if (getRes) {
+        console.log("Used Cache");
+        return res.json({ success: true, data: JSON.parse(getRes) });
+      }
     }
 
+    console.log("Using DB");
     const users = await prisma.user.findMany({
       orderBy: { createdAt: "desc" },
       select: {
@@ -94,7 +98,11 @@ app.get("/users", async (_: Request, res: Response) => {
       },
     });
 
-    await setAsync("allUsers", JSON.stringify(users));
+    await setAsync(
+      "allUsers",
+      JSON.stringify({ users, timeStamp: Date.now() })
+    );
+    await setAsync("usersExp", JSON.stringify(Date.now()));
     return res.json({ success: true, data: users });
   } catch (error) {
     console.error(error);
@@ -204,19 +212,27 @@ app.post(
 // Read all Posts
 app.get("/posts", async (_: Request, res: Response) => {
   try {
-    const getRes = await getAsync("allPosts");
-    if (getRes) {
-      console.log("Used Cache");
-      return res.json({ success: true, data: JSON.parse(getRes) });
+    let getExp: number = parseInt(String(await getAsync("postExp")));
+    if (getExp && getExp > Date.now() - 15 * 1000) {
+      const getRes = await getAsync("allPosts");
+      if (getRes) {
+        console.log("Used Cache");
+        return res.json({ success: true, data: JSON.parse(getRes) });
+      }
     }
 
+    console.log("Using DB");
     const posts = await prisma.post.findMany({
       orderBy: { createdAt: "desc" },
       include: { user: true },
     });
 
-    await setAsync("allPosts", JSON.stringify(posts));
-    console.log("Using DB");
+    await setAsync("postExp", JSON.stringify(Date.now()));
+    await setAsync(
+      "allPosts",
+      JSON.stringify({ posts, timeStamp: Date.now() })
+    );
+
     return res.json({ success: true, data: posts });
   } catch (error) {
     console.error(error);
