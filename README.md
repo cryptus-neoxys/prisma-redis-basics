@@ -5,7 +5,7 @@ This is a basic CRUD application with a simple User and Post Relational Schema.
 
 Made to learn Prisma V2 and Redis. Also implemented rate-limit with Redis as Store.
 
-## Tech Stack
+## 👨‍💻 🛠️ Tech Stack
 
 1. Nodejs
   1. Express
