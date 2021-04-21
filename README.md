@@ -1,14 +1,18 @@
 # Prisma Basics
 
 ## What does it do
-This is a basic CRUD application with a simple User and Post Relational Schema. Made to learn Prisma V2 and Redis.
+This is a basic CRUD application with a simple User and Post Relational Schema.
+
+Made to learn Prisma V2 and Redis. Also implemented rate-limit with Redis as Store.
 
 ## Tech Stack
 
 1. Nodejs
   1. Express
-  2. Prism
-  3. Redis
+  2. Express-Validator
+  3. Express-rate-limit (redisStore: redis-rate-limit)
+  4. Prisma (lacks in-built validation + lifecycle hooks)
+  5. Redis
 
 ## ▶️ Running Locally
 
