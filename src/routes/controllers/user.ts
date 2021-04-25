@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { body, validationResult } from "express-validator";
+import { body } from "express-validator";
 
 import { getAsync, setAsync, prisma } from "../../db/connect";
 
@@ -16,23 +16,6 @@ export const userValidationRules = [
       `Invalid Role, must be one of ['USER', 'ADMIN', 'SUPERUSER', undefined]`
     ),
 ];
-
-export const simpleValidationResults = validationResult.withDefaults({
-  formatter: (err) => err.msg,
-});
-
-export const checkForErrors = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const errors = simpleValidationResults(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json(errors.mapped());
-  }
-
-  next();
-};
 
 export const createUser = async (req: Request, res: Response) => {
   const { name, email, role } = req.body;
