@@ -3,12 +3,20 @@ import responseTime from "response-time";
 import rateLimit from "express-rate-limit";
 import RedisStore from "rate-limit-redis";
 import redis from "redis";
+import { promisify } from "util";
 
 import * as user from "./src/routes/controllers/user";
 import * as post from "./src/routes/controllers/post";
 import { checkForErrors } from "./src/routes/controllers/utils";
 
-const client = redis.createClient();
+const client = redis.createClient({
+  host: process.env.REDIS_HOST,
+  port: parseInt(process.env.REDIS_PORT!),
+  password: process.env.REDIS_PASSWORD,
+});
+
+export const getAsync = promisify(client.get).bind(client);
+export const setAsync = promisify(client.set).bind(client);
 
 const PORT = process.env.PORT || 5000;
 
