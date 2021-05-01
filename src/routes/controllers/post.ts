@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { body } from "express-validator";
 
-import { getAsync, setAsync, prisma } from "../../db/connect";
+import { prisma } from "../../db/connect";
+import { getAsync, setAsync } from "../../../app";
 
 export const postValidationRules = [
   body("title").isLength({ min: 1 }).withMessage("title can't be empty"),
