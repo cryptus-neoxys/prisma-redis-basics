@@ -1,5 +1,7 @@
 # Prisma Basics
 
+[![wakatime](https://wakatime.com/badge/github/cryptus-neoxys/prisma-redis-basics.svg)](https://wakatime.com/badge/github/cryptus-neoxys/prisma-redis-basics)
+
 ## What does it do
 This is a basic CRUD application with a simple User and Post Relational Schema.
 
