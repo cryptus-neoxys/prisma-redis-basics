@@ -1,4 +1,4 @@
-# Prisma Basics
+# Prisma + Redis Basics
 
 [![wakatime](https://wakatime.com/badge/github/cryptus-neoxys/prisma-redis-basics.svg)](https://wakatime.com/badge/github/cryptus-neoxys/prisma-redis-basics)
 
