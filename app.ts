@@ -10,9 +10,9 @@ import * as post from "./src/routes/controllers/post";
 import { checkForErrors } from "./src/routes/controllers/utils";
 
 const client = redis.createClient({
-  host: process.env.REDIS_HOST,
-  port: parseInt(process.env.REDIS_PORT!),
-  password: process.env.REDIS_PASSWORD,
+  // host: process.env.REDIS_HOST,
+  // port: parseInt(process.env.REDIS_PORT!),
+  // password: process.env.REDIS_PASSWORD,
 });
 
 export const getAsync = promisify(client.get).bind(client);
